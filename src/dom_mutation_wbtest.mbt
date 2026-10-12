@@ -161,7 +161,7 @@ test "DOM mutations preserve parent-child invariants" {
       id == 0 || (id >= 1 && id <= 4) || id == 7
     }),
   }
-  let random = @splitmix.new(seed=20260827)
+  let random = @splitmix.RandomState(seed=20260827)
   for _ in 0..<2000 {
     let operation = random.next_positive_int() % 4
     let parent_id = random.next_positive_int() % node_count

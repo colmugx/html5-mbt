@@ -594,6 +594,24 @@ fn Document::serialize_node(
         buf.write_string(">")
       } else {
         buf.write_string(">")
+        // WHATWG "serializing HTML fragments": if the element is a `pre`,
+        // `textarea`, or `listing` and its first child is a Text node whose
+        // data starts with U+000A LF, append one extra LF. The parser drops a
+        // single leading newline after these start tags, so without the
+        // protective LF, `parse(to_html(parse(html)))` would not roundtrip.
+        if elem.ns == HTML &&
+          (elem.tag_name == "pre" ||
+          elem.tag_name == "textarea" ||
+          elem.tag_name == "listing") &&
+          elem.children.length() > 0 {
+          match self.get_node(elem.children[0]) {
+            Some(TextNode(text)) =>
+              if text.has_prefix("\n") {
+                buf.write_string("\n")
+              }
+            _ => ()
+          }
+        }
         if elem.ns == HTML &&
           elem.tag_name == "template" &&
           elem.template_content != NO_NODE {
