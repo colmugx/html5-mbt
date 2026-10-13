@@ -600,9 +600,11 @@ fn Document::serialize_node(
         // single leading newline after these start tags, so without the
         // protective LF, `parse(to_html(parse(html)))` would not roundtrip.
         if elem.ns == HTML &&
-          (elem.tag_name == "pre" ||
-          elem.tag_name == "textarea" ||
-          elem.tag_name == "listing") &&
+          (
+            elem.tag_name == "pre" ||
+            elem.tag_name == "textarea" ||
+            elem.tag_name == "listing"
+          ) &&
           elem.children.length() > 0 {
           match self.get_node(elem.children[0]) {
             Some(TextNode(text)) =>
